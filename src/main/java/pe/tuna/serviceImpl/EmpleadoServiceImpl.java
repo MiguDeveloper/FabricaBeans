@@ -12,7 +12,12 @@ import java.io.Serializable;
 import java.util.List;
 
 @Service("empleadoService")
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
+// Por defecto la anotacion Transactional viene con lo siguiente:
+// Ambito: PROPAGATION_REQUIRED, propagation = Propagation.PROPAGATION_REQUIRED
+// y el ReadOnly en false
+// True =  solo se permite realzar consultas con la base de datos
+// False = Permite realizar todas la operaciones con la base de datos: create, read, update, delete
 public class EmpleadoServiceImpl implements EmpleadoService {
 
     final static Logger logger = Logger.getLogger(EmpleadoServiceImpl.class);
@@ -20,14 +25,25 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @Autowired
     EmpleadoDAO empleadoDAO;
 
+
+    @Transactional(noRollbackFor = {NumberFormatException.class, ArithmeticException.class})
     public boolean guardar(Empleado empleado) {
+        boolean rpta = false;
         Integer id = (Integer) empleadoDAO.guardar(empleado);
         logger.debug("Id del nuevo empleado: " + id);
         if (id > 0) {
-            return true;
+            rpta = true;
         } else {
-            return false;
+            rpta = false;
         }
+
+        this.actualizarEmpleadoTop();
+        return rpta;
+    }
+
+    private void actualizarEmpleadoTop() {
+        int numero = Integer.valueOf("10.gg");
+        logger.info("numero: " + numero);
     }
 
     public Empleado getByIdEmpleado(int id) {

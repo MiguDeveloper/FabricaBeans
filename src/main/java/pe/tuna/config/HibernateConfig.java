@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+// Habilitamos la gestion de transacciones
 @EnableTransactionManagement
 @PropertySource(value = "classpath:application.properties")
 public class HibernateConfig {
